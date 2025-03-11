@@ -2,11 +2,11 @@
 A simple JavaScript-based quiz application.
 
 # Features :
-✔️ Multiple-choice questions
-✔️ Real-time score tracking
-✔️ Interactive UI
-✔️ Responsive design
-✔️ Instant feedback on answers
+### ✔️ Multiple-choice questions
+### ✔️ Real-time score tracking
+### ✔️ Interactive UI
+### ✔️ Responsive design
+### ✔️ Instant feedback on answers
 
 # How to Run the Project
 
