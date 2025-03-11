@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .quiz-container {
+            width: 500px;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        #question-container {
+            display: none;
+            margin-bottom: 20px;
+        }
+        #question-text {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        #answer-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .answer-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            padding: 8px;
+            width: 100%;
+            background: #eaeaea;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 8px;
+        }
+        .answer-label:hover {
+            background: #d2d2d2;
+        }
+        input[type="radio"] {
+            transform: scale(1.2);
+        }
+        #controls-container {
+            margin-top: 15px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: white;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #timer-container {
+            font-size: 14px;
+            font-weight: bold;
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Quiz App</h1>
+        <button id="start-button">Start Quiz</button>
+        <div id="question-container">
+            <p id="question-text"></p>
+            <div id="answer-buttons"></div>
+        </div>
+        <div id="controls-container">
+            <button id="submit-button" style="display:none;">Submit</button>
+            <div id="timer-container">Time Left: <span id="timer">30</span> sec</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const quizQuestions = [
+    { question: "What is the capital of India?", options: ["New Delhi", "London", "Berlin", "Rome"], correctAnswer: "New Delhi" },
+    { question: "Which country invented Chess?", options: ["India", "United States", "Canada", "Germany"], correctAnswer: "India" },
+    { question: "Which HTML element makes text bold?", options: ["<a>", "<pre>", "<br>", "<b>"], correctAnswer: "<b>" },
+    { question: "What is the fourth state of matter?", options: ["Solid", "Plasma", "Liquid", "Gas"], correctAnswer: "Plasma" },
+    { question: "India is a federal union comprising twenty-eight states and how many union territories?", options: ["6", "7", "8", "9"], correctAnswer: "8" },
+    { question: "Which of the following is the capital of Arunachal Pradesh?", options: ["Itanagar", "Dispur", "Imphal", "Panaji"], correctAnswer: "Itanagar" },
+    { question: "What is the state flower of Haryana?", options: ["Lotus", "Rhododendron", "Golden Shower", "None of these"], correctAnswer: "Lotus" },
+    { question: "Which is the largest coffee-producing state of India?", options: ["Tamil Nadu", "Karnataka", "Arunachal Pradesh", "Kerala"], correctAnswer: "Karnataka" },
+    { question: "How to create a hyperlink in HTML?", options: [
+        "<a link = “www.thinkandlearn.com”> thinkandlearn.com </a>",
+        "<a> www.thinkandlearn.com <thinkandlearn.com /a>",
+        "<a href =“www.thinkandlearn.com”> thinkandlearn.com </a>",
+        "<a url =“www.thinkandlearn.com” thinkandlearn.com /a>"
+    ], correctAnswer: "<a href =“www.thinkandlearn.com”> thinkandlearn.com </a>" },
+    { question: "In HTML, how do we insert an image?", options: [
+        "<img src = “jtp.png” />",
+        "<img href = “jtp.png” />",
+        "<img link = “jtp.png” />",
+        "<img url = “jtp.png” />"
+    ], correctAnswer: "<img src = “jtp.png” />" },
+    { question: "Which tag do we use to define the options present in the dropdown selection lists?", options: ["<list>", "<dropdown>", "<option>", "<select>"], correctAnswer: "<option>" },
+    { question: "Which HTML tag do we use to display text along with a scrolling effect?", options: ["<div>", "<scroll>", "<marquee>", "None of the above"], correctAnswer: "<marquee>" },
+    { question: "In HTML, we use the <hr> tag for ___________.", options: ["vertical ruler", "horizontal ruler", "new line", "new paragraph"], correctAnswer: "horizontal ruler" },
+    { question: "In HTML, the tags are __________.", options: ["in upper case", "case-sensitive", "in lowercase", "not case sensitive"], correctAnswer: "not case sensitive" },
+    { question: "Which tag is used in HTML5 for the initialization of the document type?", options: ["<Doctype HTML>", "<!DOCTYPE html>", "<Doctype>", "</Doctype html>"], correctAnswer: "<!DOCTYPE html>" },
+    { question: "What is the correct way in which we can start an ordered list that has the numeric value count of 5?", options: [
+        "<ol type = “1” start = “5”>",
+        "<ol type = “1” begin = “5”>",
+        "<ol type = “1” num = “5”>",
+        "<ol type = “1” initial = “5”>"
+    ], correctAnswer: "<ol type = “1” start = “5”>" },
+    { question: "Which one is the HTML document’s root tag?", options: ["<head>", "<body>", "<title>", "<html>"], correctAnswer: "<html>" },
+    { question: "Which HTML tag do we use for displaying the power in the expression, (x²–y²)?", options: ["<p>", "<sub>", "<sup>", "None of the above"], correctAnswer: "<sup>" },
+    { question: "Which of these doesn’t support the MP3 format?", options: ["Opera", "Safari", "Chrome", "Firefox"], correctAnswer: "Opera" }
+];
+
+            let currentQuestionIndex = 0;
+            let score = 0;
+            let timeLeft = 30;
+            let timerInterval;
+
+            function startQuiz() {
+                document.getElementById("start-button").style.display = "none";
+                document.getElementById("question-container").style.display = "block";
+                document.getElementById("submit-button").style.display = "block";
+                displayQuestion();
+            }
+
+            function displayQuestion() {
+                if (currentQuestionIndex >= quizQuestions.length) {
+                    endQuiz();
+                    return;
+                }
+
+                const currentQuestion = quizQuestions[currentQuestionIndex];
+                document.getElementById("question-text").innerText = currentQuestion.question;
+                const answerButtons = document.getElementById("answer-buttons");
+                answerButtons.innerHTML = "";
+
+                currentQuestion.options.forEach(option => {
+                    const label = document.createElement("label");
+                    label.classList.add("answer-label");
+                    const radioInput = document.createElement("input");
+                    radioInput.type = "radio";
+                    radioInput.name = "answer";
+                    radioInput.value = option;
+                    label.appendChild(radioInput);
+                    label.appendChild(document.createTextNode(option));
+                    answerButtons.appendChild(label);
+                });
+
+                startTimer();
+            }
+
+            function submitAnswer() {
+                const selectedOption = document.querySelector('input[name="answer"]:checked');
+                if (!selectedOption) return;
+
+                clearInterval(timerInterval);
+
+                if (selectedOption.value === quizQuestions[currentQuestionIndex].correctAnswer) {
+                    score++;
+                }
+
+                currentQuestionIndex++;
+                displayQuestion();
+            }
+
+            function startTimer() {
+                timeLeft = 30;
+                document.getElementById("timer").textContent = timeLeft;
+                clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    document.getElementById("timer").textContent = timeLeft;
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        submitAnswer(); 
+                    }
+                }, 1000);
+            }
+
+            function endQuiz() {
+                document.getElementById("question-container").innerHTML = `
+                    <h2>Quiz Completed!</h2>
+                    <p>Your Score: ${score} out of ${quizQuestions.length}</p>
+                    <p>Score Percentage: ${(score / quizQuestions.length * 100).toFixed(2)}%</p>
+                `;
+                document.getElementById("submit-button").style.display = "none";
+                document.getElementById("timer-container").style.display = "none";
+            }
+
+            document.getElementById("start-button").addEventListener("click", startQuiz);
+            document.getElementById("submit-button").addEventListener("click", submitAnswer);
+        });
+    </script>
+</body>
+</html>
